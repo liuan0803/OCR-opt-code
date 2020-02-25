@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2020/1/8 20:57
-# @Author  : 2014Vee
-# @Email   : 1976535998@qq.com
+# @Author  : liuan0803
+# @Email   : liuan0803@126.com
 # @File    : resnetCBAM.py
 # @Software: PyCharm
 import torch
