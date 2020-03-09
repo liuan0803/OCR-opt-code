@@ -154,47 +154,48 @@ def abs_smooth(x):
     return r
 
 
-# 构建网络结构
+#构建网络结构
 
-input_data = tf.placeholder(tf.float32, shape=[None, h, w, c], name='x')  # 输入的图像数据（归一化后的图像数据）
-input_bound = tf.placeholder(tf.float32, shape=[None, None], name='y')  # 输入的标记的边框坐标数据（缩放后的xml坐标）
-prob = tf.placeholder(tf.float32, name='keep_prob')
+input_data = tf.placeholder(tf.float32,shape=[None,h,w,c],name='x')  #输入的图像数据（归一化后的图像数据）
+input_bound = tf.placeholder(tf.float32,shape=[None,None],name='y') #输入的标记的边框坐标数据（缩放后的xml坐标）
+prob=tf.placeholder(tf.float32, name='keep_prob')
 
-# 第一个卷积层（192——>96) （48--》24）
-# conv1 = slim.repeat(input_data, 2, slim.conv2d, 32, [3, 3], scope='conv1')
-conv1 = slim.conv2d(input_data, 32, [3, 3], scope='conv1')  ##32是指卷积核的个数，[3, 3]是指卷积核尺寸，默认步长是[1,1]
-pool1 = slim.max_pool2d(conv1, [2, 2], scope='pool1')  # [2,2]是池化步长
 
-# 第二个卷积层（96-48） （24-》12）
-# conv2 =  slim.repeat(pool1, 2, slim.conv2d, 64, [3, 3], scope='conv2')
+#第一个卷积层（192——>96) （48--》24）
+#conv1 = slim.repeat(input_data, 2, slim.conv2d, 32, [3, 3], scope='conv1')
+conv1 = slim.conv2d(input_data,  32, [3, 3], scope='conv1')##32是指卷积核的个数，[3, 3]是指卷积核尺寸，默认步长是[1,1]
+pool1 = slim.max_pool2d(conv1, [2, 2], scope='pool1')#[2,2]是池化步长
+
+#第二个卷积层（96-48） （24-》12）
+#conv2 =  slim.repeat(pool1, 2, slim.conv2d, 64, [3, 3], scope='conv2')
 conv2 = slim.conv2d(pool1, 64, [3, 3], scope='conv2')
 pool2 = slim.max_pool2d(conv2, [2, 2], scope='pool2')
 
-# 第三个卷积层（48-24） （12-》6）
-# conv3 = slim.repeat(pool2, 2, slim.conv2d, 128, [3, 3], scope='conv3')
+#第三个卷积层（48-24） （12-》6）
+#conv3 = slim.repeat(pool2, 2, slim.conv2d, 128, [3, 3], scope='conv3')
 conv3 = slim.conv2d(pool2, 128, [3, 3], scope='conv3')
 pool3 = slim.max_pool2d(conv3, [2, 2], scope='pool3')
 
-# 第四个卷积层（24） （6）
-conv4 = slim.conv2d(pool3, 256, [3, 3], scope='conv4')
+#第四个卷积层（24） （6）
+conv4 = slim.conv2d(pool3, 256 ,[3, 3], scope='conv4')
 dropout = tf.layers.dropout(conv4, rate=prob, training=True)
-# dropout = tf.nn.dropout(conv4,keep_prob)
-# pool4 = slim.max_pool2d(conv4, [2, 2], scope='pool4')
+#dropout = tf.nn.dropout(conv4,keep_prob) 
+#pool4 = slim.max_pool2d(conv4, [2, 2], scope='pool4')
 
-# 第五个卷积层（24-12） （6-》3）
-# conv5 = slim.repeat(dropout, 2, slim.conv2d, 128, [3, 3], scope='conv5')
-conv5 = slim.conv2d(dropout, 128, [3, 3], scope='conv5')
+#第五个卷积层（24-12） （6-》3）
+#conv5 = slim.repeat(dropout, 2, slim.conv2d, 128, [3, 3], scope='conv5')
+conv5 = slim.conv2d(dropout , 128, [3, 3], scope='conv5')
 pool5 = slim.max_pool2d(conv5, [2, 2], scope='pool5')
 
-# 第六个卷积层（12-6） （3-》1）
-# conv6 = slim.repeat(pool5, 2, slim.conv2d, 64, [3, 3], scope='conv6')
+#第六个卷积层（12-6） （3-》1）
+#conv6 = slim.repeat(pool5, 2, slim.conv2d, 64, [3, 3], scope='conv6')
 conv6 = slim.conv2d(pool5, 64, [3, 3], scope='conv6')
 pool6 = slim.max_pool2d(conv6, [2, 2], scope='pool6')
 
 reshape = tf.reshape(pool6, [-1, 6 * 1 * 64])
 print(reshape.get_shape())
 
-fc = slim.fully_connected(reshape, 4, scope='fc')
+fc = slim.fully_connected(reshape, 4, scope='fc')  
 print(fc)
 print(input_data)
 
